@@ -18,3 +18,7 @@ query force -- name CreateAccount :one
 
 
 note select for no key update to update data
+
+ssh -T git@github.com
+git remote set-url origin git@github.com:tonghoameo/goknab.git
+
