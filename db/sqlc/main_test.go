@@ -14,7 +14,7 @@ var testDb *sql.DB
 
 const (
 	dbDriver = "postgres"
-	dbSource = "postgres://kali:kali@localhost:5432/simplebank"
+	dbSource = "postgres://root:secret@localhost:5432/simple_bank"
 )
 
 func TestMain(m *testing.M) {
