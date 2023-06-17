@@ -22,3 +22,21 @@ note select for no key update to update data
 ssh -T git@github.com
 git remote set-url origin git@github.com:tonghoameo/goknab.git
 
+
+reference 
+https://github.com/gin-gonic/gin/blob/master/docs/doc.md#using-get-post-put-patch-delete-and-options
+
+
+run test with curl
+
+create account
+curl -X POST -d '{"owner":"asdsad","currency":"USD"}' http://localhost:8888/accounts
+
+
+how to use mock with golang
+
+go mod tidy
+go get github.com/golang/mock
+go mod download github.com/golang/mock
+mockgen -destination db/mock/store.go github.com/binbomb/goapp/simplebank/db/sqlc Store
+

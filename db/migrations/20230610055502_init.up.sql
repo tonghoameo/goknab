@@ -1,7 +1,11 @@
 -- Add up migration script here
-CREATE TYPE "currency" AS ENUM (
-  'USD',
-  'EUR'
+CREATE TABLE "users" (
+  "username" varchar PRIMARY KEY,
+  "hashed_password" varchar NOT NULL,
+  "full_name" varchar NOT NULL,
+  "email" varchar UNIQUE NOT NULL,
+  "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
+  "created_at" timestamptz NOT NULL DEFAULT 'now()'
 );
 
 CREATE TABLE "accounts" (
@@ -27,29 +31,11 @@ CREATE TABLE "transfers" (
   "created_at" timestamptz NOT NULL DEFAULT 'now()'
 );
 
-CREATE TABLE "follows" (
-  "following_user_id" integer NOT NULL,
-  "followed_user_id" integer NOT NULL,
-  "created_at" timestamp NOT NULL
-);
-
-CREATE TABLE "users" (
-  "id" integer PRIMARY KEY,
-  "username" varchar NOT NULL,
-  "role" varchar NOT NULL,
-  "created_at" timestamp NOT NULL
-);
-
-CREATE TABLE "posts" (
-  "id" integer PRIMARY KEY,
-  "title" varchar NOT NULL,
-  "body" text NOT NULL,
-  "user_id" integer NOT NULL,
-  "status" varchar NOT NULL,
-  "created_at" timestamp NOT NULL
-);
 
 CREATE INDEX ON "accounts" ("owner");
+
+-- CREATE UNIQUE INDEX ON "accounts" ("owner", "currency");
+ALTER TABLE "accounts" ADD CONSTRAINT "owner_currency_key" UNIQUE ("owner","currency");
 
 CREATE INDEX ON "entries" ("account_id");
 
@@ -61,14 +47,10 @@ CREATE INDEX ON "transfers" ("from_account_id", "to_account_id");
 
 COMMENT ON COLUMN "transfers"."amount" IS 'can be negative or positive';
 
-COMMENT ON COLUMN "posts"."body" IS 'Content of the post';
+ALTER TABLE "accounts" ADD FOREIGN KEY ("owner") REFERENCES "users" ("username");
 
 ALTER TABLE "entries" ADD FOREIGN KEY ("account_id") REFERENCES "accounts" ("id");
+
 ALTER TABLE "transfers" ADD FOREIGN KEY ("from_account_id") REFERENCES "accounts" ("id");
+
 ALTER TABLE "transfers" ADD FOREIGN KEY ("to_account_id") REFERENCES "accounts" ("id");
-
-ALTER TABLE "posts" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
-
-ALTER TABLE "follows" ADD FOREIGN KEY ("following_user_id") REFERENCES "users" ("id");
-
-ALTER TABLE "follows" ADD FOREIGN KEY ("followed_user_id") REFERENCES "users" ("id");

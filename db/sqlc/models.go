@@ -5,52 +5,8 @@
 package db
 
 import (
-	"database/sql/driver"
-	"fmt"
 	"time"
 )
-
-type Currency string
-
-const (
-	CurrencyUSD Currency = "USD"
-	CurrencyEUR Currency = "EUR"
-)
-
-func (e *Currency) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = Currency(s)
-	case string:
-		*e = Currency(s)
-	default:
-		return fmt.Errorf("unsupported scan type for Currency: %T", src)
-	}
-	return nil
-}
-
-type NullCurrency struct {
-	Currency Currency
-	Valid    bool // Valid is true if Currency is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullCurrency) Scan(value interface{}) error {
-	if value == nil {
-		ns.Currency, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.Currency.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullCurrency) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.Currency), nil
-}
 
 type Account struct {
 	ID        int64     `json:"id"`
@@ -67,22 +23,6 @@ type Entry struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-type Follow struct {
-	FollowingUserID int32     `json:"following_user_id"`
-	FollowedUserID  int32     `json:"followed_user_id"`
-	CreatedAt       time.Time `json:"created_at"`
-}
-
-type Post struct {
-	ID    int32  `json:"id"`
-	Title string `json:"title"`
-	// Content of the post
-	Body      string    `json:"body"`
-	UserID    int32     `json:"user_id"`
-	Status    string    `json:"status"`
-	CreatedAt time.Time `json:"created_at"`
-}
-
 type Transfer struct {
 	ID            int64 `json:"id"`
 	FromAccountID int64 `json:"from_account_id"`
@@ -93,8 +33,10 @@ type Transfer struct {
 }
 
 type User struct {
-	ID        int32     `json:"id"`
-	Username  string    `json:"username"`
-	Role      string    `json:"role"`
-	CreatedAt time.Time `json:"created_at"`
+	Username          string    `json:"username"`
+	HashedPassword    string    `json:"hashed_password"`
+	FullName          string    `json:"full_name"`
+	Email             string    `json:"email"`
+	PasswordChangedAt time.Time `json:"password_changed_at"`
+	CreatedAt         time.Time `json:"created_at"`
 }
