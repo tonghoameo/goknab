@@ -40,3 +40,4 @@ go get github.com/golang/mock
 go mod download github.com/golang/mock
 mockgen -destination db/mock/store.go github.com/binbomb/goapp/simplebank/db/sqlc Store
 
+sudo docker run --network="host" --name simplebank -p 8888:8888 -e GIN_MODE=release -e DB_URI=postgres://root:secret@127.0.0.1:5432/simple_bank?sslmode=disable simplebank:latest
