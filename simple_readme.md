@@ -22,3 +22,4 @@ note select for no key update to update data
 ssh -T git@github.com
 git remote set-url origin git@github.com:tonghoameo/goknab.git
 
+mockgen -package mockdb -destination db/mock/store.go github.com/binbomb/goapp/simplebank/db/sqlc Store
