@@ -43,7 +43,7 @@ func authMiddleware(tokenMaker token.Maker) gin.HandlerFunc {
 			map[Authorization][1] = token= v2.local.BiS9qrXCgAfuOkAJ0DPabsRnBA17DMIqivMdOjtp0pl7-JFtkoyNmEPJXvMOhvivH37XgNNL92ZsIhp0qY8HKYK6PdcUpGaOMdXue7Wl7N2eFlqVdbidMDaTHrwPOMXyleMJqk3_V5t6HyXpEHK1JlL8VhwvDqq6OYC_uySHBxKUliYy6JuvTelL-pIQ.bnVsbA
 		*/
 		fields := strings.Fields(authorizationHeader)
-		fmt.Printf(" len fileds %d  values fileds \n", len(fields), fields)
+		fmt.Printf(" len fileds %d  values %v fileds \n", len(fields), fields)
 		if len(fields) < 2 {
 			// error in here
 			err := errors.New("invalid authorization header	format")
