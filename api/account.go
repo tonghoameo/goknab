@@ -30,7 +30,7 @@ func (server *Server) createAccount(ctx *gin.Context) {
 	arg := db.CreateAccountParams{
 		Owner:    authPayload.Username,
 		Currency: req.Currency,
-		Balance:  0,
+		Balance:  1000,
 	}
 	account, err := server.store.CreateAccount(ctx, arg)
 
