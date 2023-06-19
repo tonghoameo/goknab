@@ -6,6 +6,6 @@ CREATE TABLE "sessions" (
   "user_agent" varchar NOT NULL,
   "client_ip" varchar NOT NULL,
   "is_blocked" boolean NOT NULL DEFAULT false,
-  "expires_at" timestamptz NOT NULL ,
+  "expires_at" timestamptz NOT NULL 
 );
 ALTER TABLE sessions ADD FOREIGN KEY ("username") REFERENCES "users" ("username");

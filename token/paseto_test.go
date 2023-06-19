@@ -18,10 +18,11 @@ func TestPasetoMaker(t *testing.T) {
 	duration := time.Minute
 	//expiredAt := issueAt.Add(duration)
 
-	token, err := maker.CreateToken(username, -duration)
+	token, payload, err := maker.CreateToken(username, -duration)
 	fmt.Println("token is created ", token)
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
+	require.NotEmpty(t, payload)
 
 	payload, err := maker.VerifyToken(token)
 	require.Error(t, err)
@@ -34,10 +35,11 @@ func TestExpiredPasetoToken(t *testing.T) {
 	maker, err := NewPasetoMaker(utils.RandomString(32))
 	require.NoError(t, err)
 
-	token, err := maker.CreateToken(utils.RandomOwner(), -time.Minute)
+	token, payload, err := maker.CreateToken(utils.RandomOwner(), -time.Minute)
 	fmt.Println("token is created ", token)
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
+	require.NotEmpty(t, payload)
 
 	payload, err := maker.VerifyToken(token)
 	require.Error(t, err)
@@ -49,10 +51,11 @@ func TestInvalidPasetoToken(t *testing.T) {
 	maker, err := NewPasetoMaker(utils.RandomString(32))
 	require.NoError(t, err)
 
-	token, err := maker.CreateToken(utils.RandomOwner(), time.Minute)
+	token, payload, err := maker.CreateToken(utils.RandomOwner(), time.Minute)
 	fmt.Println("token is created ", token)
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
+	require.NotEmpty(t, payload)
 
 	payload, err := maker.VerifyToken(token)
 	require.Error(t, err)

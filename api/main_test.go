@@ -13,8 +13,9 @@ import (
 
 func newTestServer(t *testing.T, store db.Store) *Server {
 	config := utils.Config{
-		TokenSymetricKey:   utils.RandomString(32),
-		AccessTokenDuraton: time.Minute,
+		TokenSymetricKey:    utils.RandomString(32),
+		AccessTokenDuraton:  time.Minute,
+		RefreshTokenDuraton: time.Hour * 24,
 	}
 
 	server, err := NewServer(config, store)
