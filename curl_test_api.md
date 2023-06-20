@@ -1,7 +1,7 @@
 create user
 
 curl -X POST -d '{"username":"balance4","password":"secret","full_name":"tonho","email":"balance4@gmail.com"}' http://127.0.0.1:8888/users
-curl -X POST -d '{"username":"duymeo","password":"secret","full_name":"duymeo","email":"duymeo@gmail.com"}' http://127.0.0.1:8888/users
+curl -X POST -d '{"username":"tonho","password":"secret","full_name":"tonho","email":"tonho@gmail.com"}' http://127.0.0.1:8888/users
 user login to create account
 
 curl -X POST  -d '{"username":"balance4","password":"secret"}' http://127.0.0.1:8888/users/login

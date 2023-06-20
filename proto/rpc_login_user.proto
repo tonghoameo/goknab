@@ -3,7 +3,7 @@ package pb;
 
 import "user.proto";
 import "google/protobuf/timestamp.proto";
-option go_package="github.com/binbomb/goapp/simplebank";
+option go_package = "github.com/binbomb/goapp/simplebank/pb";
 message LoginUserRequest {
     string username = 1;
     string password= 2;

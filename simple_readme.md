@@ -50,3 +50,12 @@ https://dbdocs.io/duyduymeo/simplebank?view=relationships
 protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
     --go-grpc_out=pb --go-grpc_opt=paths=source_relative \
 proto/*.proto
+
+
+https://github.com/googleapis/googleapis
+
+cp from googleapis/google/api to proto/google/api
+
+edit service simplebank to run grpc and http once code
+
+add --grpc-gateway_out=pb

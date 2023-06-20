@@ -10,11 +10,12 @@ import (
 // The values are read by viper from a config or environment variables
 
 type Config struct {
-	DBDriver           string        `mapstructure:"DB_DRIVER"`
-	DBSource           string        `mapstructure:"DB_URI"`
-	ServerAddress      string        `mapstructure:"SERVER_ADDRESS"`
-	TokenSymetricKey   string        `mapstructure:"TOKEN_SYMETRIC_KEY"`
-	AccessTokenDuraton time.Duration `mapstructure:"ACCESS_TOKEN_DURATON"`
+	DBDriver            string        `mapstructure:"DB_DRIVER"`
+	DBSource            string        `mapstructure:"DB_URI"`
+	HTTPServerAddress   string        `mapstructure:"HTTP_SERVER_ADDRESS"`
+	GRPCServerAddress   string        `mapstructure:"GRPC_SERVER_ADDRESS"`
+	TokenSymetricKey    string        `mapstructure:"TOKEN_SYMETRIC_KEY"`
+	AccessTokenDuraton  time.Duration `mapstructure:"ACCESS_TOKEN_DURATON"`
 	RefreshTokenDuraton time.Duration `mapstructure:"REFRESH_TOKEN_DURATON"`
 }
 
