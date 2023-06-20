@@ -59,3 +59,7 @@ cp from googleapis/google/api to proto/google/api
 edit service simplebank to run grpc and http once code
 
 add --grpc-gateway_out=pb
+
+
+add swagger https://app.swaggerhub.com/
+
