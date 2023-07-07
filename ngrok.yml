@@ -1,0 +1,7 @@
+version: 2
+authtoken: 2CQdKexfflxki8LrC6G6VWgWlEs_6DF3MfgqphmcuFAvV7acu
+tunnels:
+  httpgatteway:
+    proto: http
+    addr: 8888
+

@@ -26,7 +26,7 @@ func (server *Server) createAccount(ctx *gin.Context) {
 	}
 
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
-	fmt.Println("CreateAccountParams  for user: ",authPayload.Username )
+	fmt.Println("CreateAccountParams  for user: ", authPayload.Username)
 	// req.Owner depend on user.Username
 	arg := db.CreateAccountParams{
 		Owner:    authPayload.Username,
