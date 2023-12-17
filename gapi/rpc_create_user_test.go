@@ -17,6 +17,8 @@ import (
 	mockwk "github.com/binbomb/goapp/simplebank/worker/mock"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type eqCreateUserTxParamsMatcher struct {
@@ -96,6 +98,31 @@ func TestCreateUserAPI(t *testing.T) {
 				require.Equal(t, user.Username, createdUser.Username)
 				require.Equal(t, user.FullName, createdUser.FullName)
 				require.Equal(t, user.Email, createdUser.Email)
+			},
+		},
+		{
+			name: "DuplicateUserName",
+			req: &pb.CreateUserRequest{
+				Username: user.Username,
+				Password: password,
+				FullName: user.FullName,
+				Email:    user.Email,
+			},
+			buildStubs: func(store *mockdb.MockStore, taskDistributor *mockwk.MockTaskDistributor) {
+
+				store.EXPECT().
+					CreateUserTx(gomock.Any(), gomock.Any()).
+					Times(1).
+					Return(db.CreateUserTxResult{}, db.ErrUniqueViolation)
+				taskDistributor.EXPECT().
+					DistributeTastSendVerifyEmail(gomock.Any(), gomock.Any(), gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, res *pb.CreateUserResponse, err error) {
+				require.Error(t, err)
+				st, ok := status.FromError(err)
+				require.True(t, ok)
+				require.Equal(t, codes.AlreadyExists, st.Code())
 			},
 		},
 	}

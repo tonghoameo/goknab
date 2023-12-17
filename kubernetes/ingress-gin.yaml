@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-bank-ingress-gin
+  annotations:
+    cert-manager.io/cluster-issue: letsencrypt
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "gin.simplebank.com"
+    http:
+      paths:
+      - path: "/"
+        pathType: Prefix
+        backend:
+          service:
+            name: simple-bank-api-service
+            port:
+              number: 81
+  tls:
+  - hosts:
+    - gin.simplebank.com
+    secretName: simple-bank-gin-api-cert
+

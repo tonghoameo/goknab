@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-bank-api-deployment
+  labels:
+    app: simple-bank-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: simple-bank-api
+  template:
+    metadata:
+      labels:
+        app: simple-bank-api
+    spec:
+      containers:
+      - name: simple-bank-api
+        image: duymeo/simplebank_api:0.0.2
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8888
+          name: http-server
+        - containerPort: 9090
+          name: grpc-server
+        - containerPort: 8080
+          name: gin-server
+        env:
+          - name: DB_URI
+            value: "postgresql://root:secret@postgres-service:5432/simple_bank?sslmode=disable"
+          - name: REDIS_ADDRESS
+            value: "redis-service:6379"
+        command: ["/app/main"]
+        args:
+          - "/app/wait-for.sh"
+          - "postgres:5432"
+          - "--"
+          - "/app/start.sh"            

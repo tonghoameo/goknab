@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"net"
 	"net/http"
@@ -20,7 +19,8 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/hibiken/asynq"
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -37,7 +37,8 @@ func main() {
 	if config.Environment == "developement" {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
-	conn, err := sql.Open(config.DBDriver, config.DBSource)
+	//conn, err := sql.Open(config.DBDriver, config.DBSource)
+	connPool, err := pgxpool.New(context.Background(), config.DBSource)
 
 	if err != nil {
 		log.Fatal().Msg("cannot connect to db: ")
@@ -52,7 +53,7 @@ func main() {
 	}
 	taskDistributor := worker.NewRedisTaskDistributor(redisOpt)
 
-	store := db.NewStore(conn)
+	store := db.NewStore(connPool)
 	go runTaskProcessor(config, redisOpt, store)
 	go runGatewayServer(config, store, taskDistributor)
 	go runGinServer(config, store)
@@ -128,7 +129,7 @@ func runGinServer(config utils.Config, store db.Store) {
 	if err != nil {
 		log.Fatal().Msg("cannot create server ")
 	}
-	server.Start(config.HTTPGinServerAddress)
+	err = server.Start(config.HTTPGinServerAddress)
 	if err != nil {
 		log.Fatal().Msg("cannot start server ")
 	}
@@ -150,6 +151,7 @@ func runMigrationDB(migrationURL string, dbSource string) {
 		dbSource,
 	)
 	if err != nil {
+		fmt.Println(err)
 		log.Fatal().Msg("cannot create migration")
 	}
 	if err := migration.Up(); err != nil && err != migrate.ErrNoChange {
@@ -164,6 +166,7 @@ func runDownDB(migrationURL string, dbSource string) {
 		dbSource,
 	)
 	if err != nil {
+		fmt.Println(err)
 		log.Fatal().Msg("cannot create migration")
 	}
 

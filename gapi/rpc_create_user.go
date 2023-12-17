@@ -10,7 +10,6 @@ import (
 	"github.com/binbomb/goapp/simplebank/valid"
 	"github.com/binbomb/goapp/simplebank/worker"
 	"github.com/hibiken/asynq"
-	"github.com/lib/pq"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -55,12 +54,10 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 	}
 	txResult, err := server.store.CreateUserTx(ctx, arg)
 	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok {
-			switch pqErr.Code.Name() {
-			case "unique_violation":
-				return nil, status.Errorf(codes.AlreadyExists, "fail to hashedPassword %s", err)
-			}
+		if db.ErrorDbHandle(err) == db.UniqueViolation {
+			return nil, status.Errorf(codes.AlreadyExists, "username is exists %s", err)
 		}
+		// check pgError struct
 		return nil, status.Errorf(codes.Internal, "fail to create user %s", err)
 	}
 	// send task verify email

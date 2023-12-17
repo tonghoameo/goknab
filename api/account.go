@@ -1,7 +1,6 @@
 package api
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	"log"
@@ -10,7 +9,6 @@ import (
 	db "github.com/binbomb/goapp/simplebank/db/sqlc"
 	"github.com/binbomb/goapp/simplebank/token"
 	"github.com/gin-gonic/gin"
-	"github.com/lib/pq"
 )
 
 type createAccountRequest struct {
@@ -31,18 +29,17 @@ func (server *Server) createAccount(ctx *gin.Context) {
 	arg := db.CreateAccountParams{
 		Owner:    authPayload.Username,
 		Currency: req.Currency,
-		Balance:  1000,
+		Balance:  0,
 	}
-	fmt.Println("init balance : ", arg.Balance)
+	//fmt.Println("init balance : ", arg.Balance)
 	account, err := server.store.CreateAccount(ctx, arg)
 
 	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok {
-			log.Println(pqErr.Code.Name())
-			switch pqErr.Code.Name() {
-			case "foreign_key_violation", "unique_violation":
-				ctx.JSON(http.StatusForbidden, errorResponse(err))
-			}
+		errCode := db.ErrorDbHandle(err)
+		if errCode == db.UniqueViolation || errCode == db.ForeignKeyViolation {
+			log.Println(errCode)
+			ctx.JSON(http.StatusForbidden, errorResponse(err))
+			return
 		}
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -63,7 +60,7 @@ func (server *Server) getAccount(ctx *gin.Context) {
 	}
 	acc, err := server.store.GetAccount(ctx, req.ID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, db.ErrRecordNotFound) {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 
 			return
@@ -103,7 +100,7 @@ func (server *Server) listAccounts(ctx *gin.Context) {
 	accounts, err := server.store.ListAccounts(ctx, arg)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, db.ErrRecordNotFound) {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 
 			return

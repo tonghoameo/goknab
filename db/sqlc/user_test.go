@@ -2,11 +2,11 @@ package db
 
 import (
 	"context"
-	"database/sql"
 	"testing"
 	"time"
 
 	"github.com/binbomb/goapp/simplebank/utils"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/require"
 )
 
@@ -19,7 +19,7 @@ func createRandomUser(t *testing.T) User {
 		FullName:       utils.RandomOwner(),
 		Email:          utils.RandomEmail(),
 	}
-	newUser, err := testQueries.CreateUser(context.Background(), arg)
+	newUser, err := testStore.CreateUser(context.Background(), arg)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, newUser)
@@ -38,7 +38,7 @@ func TestCreateUser(t *testing.T) {
 
 func TestGetUser(t *testing.T) {
 	user1 := createRandomUser(t)
-	user2, err := testQueries.GetUser(context.Background(), user1.Username)
+	user2, err := testStore.GetUser(context.Background(), user1.Username)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, user2)
@@ -54,10 +54,10 @@ func TestGetUser(t *testing.T) {
 func TestUpdateUserOnlyFullName(t *testing.T) {
 	oldUser := createRandomUser(t)
 	newFullName := utils.RandomString(8)
-	updatedUser, err := testQueries.UpdateUser(context.Background(),
+	updatedUser, err := testStore.UpdateUser(context.Background(),
 		UpdateUserParams{
 			Username: oldUser.Username,
-			FullName: sql.NullString{
+			FullName: pgtype.Text{
 				String: newFullName,
 				Valid:  true,
 			},
@@ -72,10 +72,10 @@ func TestUpdateUserOnlyFullName(t *testing.T) {
 func TestUpdateUserOnlyEmail(t *testing.T) {
 	oldUser := createRandomUser(t)
 	newEmail := utils.RandomEmail()
-	updatedUser, err := testQueries.UpdateUser(context.Background(),
+	updatedUser, err := testStore.UpdateUser(context.Background(),
 		UpdateUserParams{
 			Username: oldUser.Username,
-			Email: sql.NullString{
+			Email: pgtype.Text{
 				String: newEmail,
 				Valid:  true,
 			},

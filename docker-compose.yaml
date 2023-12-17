@@ -6,16 +6,28 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=simple_bank
+    ports:
+      - "5432:5432"
+    volumes:
+      - data-volume:/var/lib/postgresql/data
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: duymeo/simplebank_api:0.0.1
     ports:
       - "8888:8888"
+      - "9090:9090"
+      - "8080:8080"
     environment:
       - DB_URI=postgresql://root:secret@postgres:5432/simple_bank?sslmode=disable
+      - REDIS_ADDRESS=redis:6379
     depends_on:
       - postgres
+      - redis
     entrypoint:
       [
         "/app/wait-for.sh",
@@ -25,5 +37,5 @@ services:
 
       ]
     command: ["/app/main"]
-
-
+volumes:
+    data-volume:

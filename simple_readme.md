@@ -63,3 +63,17 @@ add --grpc-gateway_out=pb
 
 add swagger https://app.swaggerhub.com/
 
+
+using docker compose export ports in each services
+
+docker volume ls
+check ingress-nginx
+
+kubectl get pods -n ingress-nginx
+
+kubectl create deployment nginx-deployment --image=nginx       
+deployment.apps/nginx-deployment created
+                                                                                                                                                                       
+kubectl create service nodeport nginx-service --tcp=80:80
+service/nginx-service created
+minikube addons enable ingress
